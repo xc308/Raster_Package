@@ -384,6 +384,128 @@ ctab
 plot(r * 3)
 
 
+#=================#
+# Helper functions
+#=================#
+
+# The cell number is an important concept in raster package
+# Raster data can be thought of as a matrix 
+# but in a RasterLayer, more commonly treated as a vector
+
+# cells are numbered from the upper left cell
+# to the upper right, then continuouing on the left side of the next row
+# until the last cell at the lower-right side of the raster
+
+# several helper functions to determine the col/ row number from a cell and vice versa
+# to determine the cell number for x, y coordinates and vice versa
+
+library(raster)
+
+r <- raster(ncol = 36, nrow = 18)
+ncol(r) # [1] 36
+nrow(r) # [1] 18
+ncell(r) # [1] 648
+
+
+rowFromCell(r, 100) # [1] 3
+# the 100th cell is on the 3rd row
+
+colFromCell(r, 100) # [1] 28
+# the 100th cell is on the 28th col
+
+cellFromRowCol(r, 5, 5) # [1] 149
+# the cell at the 5th row and 5th col is 149th cell
+
+xyFromCell(r, 100)
+#       x  y
+# [1,] 95 65
+# the x,y coord of the 100th cell 
+
+cellFromXY(r, c(0, 0)) # [1] 343
+# the c(0, 0) corresponds to the 343th cell
+
+colFromX(r, 0) # [1] 19
+# when x = 0 is the 19th col
+
+rowFromY(r, 0) # [1] 10
+# when y = 0 is the 10th row
+
+
+#======================#
+# Accessing cell values
+#=======================#
+
+# getValues(): get all values or a single row
+# getValuesBlock(): read a block (rectangle) of cell values
+
+r <- raster(system.file("external/test.grd", package = "raster"))
+r_50 <- getValues(r, 50) # get the 50th row value
+
+ncol(r) # [1] 80
+nrow(r) # [1] 115
+
+r_50 # a vector
+r_50[35: 39]
+# [1] 743.8288 706.2302 646.0078 686.7291 758.0649
+
+r
+getValuesBlock(r, 50, 1, 35, 5)
+# getValuesBlock(x, row=1, nrows=1, col=1, ncols=(ncol(x)-col+1), format='', ...)
+#[1] 743.8288 706.2302 646.0078 686.7291 758.0649
+# the block starts from the 50th row, lasts for 1 row, 
+  # and starts from the 35th col, lasts for 5 columns
+# which is the same as :
+  # r_50 <- getValues(r, 50)
+  # r_50[35: 39]
+
+
+
+# also read values using cell numbers or coords
+# using extract method
+# but 1st need to get the cell numbers or coords
+# then extract the corresponding values
+
+
+cell_nums <- cellFromRowCol(r, 50, 35:39)
+extract(r, cell_nums)
+# [1] 743.8288 706.2302 646.0078 686.7291 758.0649
+
+xy_coords <- xyFromCell(r, cell = cell_nums)
+extract(r, xy_coords)
+# [1] 743.8288 706.2302 646.0078 686.7291 758.0649
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
