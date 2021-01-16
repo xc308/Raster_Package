@@ -528,6 +528,47 @@ r[1:3, 1:3, drop = FALSE] # retain matrix str
 # via getValues()
 
 
+#===========================#
+# coercion to other classes
+#===========================#
+
+# easy to coerce objs of raster classes to 
+# objs of Spatial family defined in sp package
+# which allows for using functions defined by sp 
+# (spplot) and for using other packages expecting
+# Spatial* objs.
+
+# to create a Raster obj from variable n in a SpatialGrid* x
+# use raster(x, n) or stack(x), or brick(x)
+
+# vice versa, use as(, )
+# convert objs of class im (in spatstat package)
+# and others to a RasterLayer using raster, stack, brick
+
+
+r1 <- raster(ncol = 36, nrow = 18)
+r2 <- r1
+
+r1[] <- runif(ncell(r1))
+r2[] <- runif(ncell(r1))
+
+s <- stack(r1, r2)
+sgdf <- as(s, 'SpatialGridDataFrame') # as(obj, class, )
+
+new_rast <- raster(sgdf)
+new_rast # layer 1
+new_rast_2 <- raster(sgdf, 2)
+new_rast_2 # layer 2
+
+new_stk <- stack(sgdf)
+new_stk # 2 layers togher in one stack
+
+
+
+
+
+
+
 
 
 
