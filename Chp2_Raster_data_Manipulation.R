@@ -475,6 +475,70 @@ extract(r, xy_coords)
 # [1] 743.8288 706.2302 646.0078 686.7291 758.0649
 
 
+# can also extract using SpatialPolygons* or SpatialLines*
+# Default approach for extracting raster values with polygons 
+# is that a polygon has to cover the center of a cell, for that cell to be included
+# but can use argument "weights=TRUE" 
+# get both the cell values,and the % of each cell that's covered by the polygon
+# so can apply e.g. a 50% area covered threshold 
+# or compute an area-weighted average
+
+# for lines, any cell that's crossed by a line is inclueded
+# for lines and points, a cell is included when it is below or to the right of the line/point
+
+# can also use standard R indexing to access values
+# to replace values, assign new values in a raster obj
+
+r[cell_nums]
+# [1] 743.8288 706.2302 646.0078 686.7291 758.0649
+
+r[1:4] # [1] NA NA NA NA
+
+
+# setting new raster values of a file, 
+# then the connection to that file will be lsot
+# as it is now different from the original file
+
+
+filename(r)
+# [1] "/Library/Frameworks/R.framework/Versions/4.0/Resources/library/raster/external/test.grd"
+
+r[2:3] <- 10
+r[1:4] # [1] NA 10 10 NA
+
+filename(r) # [1] ""
+
+
+# above, values are retrieved using cell numbers
+# that's a raster is represented using 1-d vector
+
+# values can also be inspected using 2-d matrix
+# 
+
+r[1, ] # the 1st row of raster r
+r[50, ]
+r[, 2]
+
+r[1:3, 1:3]
+
+r[1:3, 1:3, drop = FALSE] # retain matrix str
+
+# but accessing values through this type of indexing shoule
+# be avoided inside functions as less efficient than 
+# via getValues()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
