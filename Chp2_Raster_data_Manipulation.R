@@ -288,6 +288,123 @@ as.matrix(cvr) # worked!
 
 
 
+#======================#
+# saptail configuration
+#======================#
+
+# clump(): identify groups of cells that are connected
+# boundaries(): identifies edges, transitions btw cell values
+# area(): computes the size of each grid for unprojected rasters
+
+r <- raster(nrow = 45, ncol = 90)
+r[] <- round(runif(ncell(r)) * 3)
+a <- area(r)
+zonal(a, r, fun = "sum")
+
+plot(a)
+
+
+
+#============#
+# Predictions
+#============#
+# two functions to make model predictions to 
+# potentially very large rasters. 
+  # predict: takes a multi-layer raster and a fitted model as args
+    # fitted models can be various classes, e.g. lm , glm, gam, random forest
+  # interpolate: for models uses coords as predictor variables, e.g. kriging, spline interpolation
+
+
+#============================#
+# Vector to raster conversion
+#=============================#
+
+# raster package supports point, line, polygon
+# to raster conversion with rasterize function
+
+# for vector type data (points, lines, polygons)
+# objs of Spatial* classes defined in sp package are used
+# but points can also be represented by a two-col matrix (x, y)
+
+# point to raster conversion:
+  # often done with the purpose to analyze the point data
+  # e.g. count the number of distinct species occurs in each raster cell
+  # rasterize takes a Raster obj to set the spatial extent and resolutio
+  # and a function to determine how to summarize the points or attributie of each point by cell
+
+
+# Polygon to raster conversion:
+  # done to create a RasterLayer that can act as a mask, to set NA to a set of cells 
+  # or to summarize values on a raster by zone
+  # e.g. a country polygon is transferred to a raster then used to set all cells outside the country to NA
+  # e.g. polygons representing administrative regions can be transferred to a raster to summarize raster values by region
+
+
+# conversely, convert values of a RasterLayer to points or polygons
+# using rasterToPoints and rasterToPolygons
+# both functions only return values for cells that are not NA
+
+
+#=======================#
+# Summarizing functions
+#========================#
+
+# with the 1st arg being a Raster obj
+# normal summary stats function, e.g. min, max, mean retruns a RasterLayer
+# can use cellStats, if a summary of all cells of a single Raster Obj is wanted
+  # freq: make a freq talbe
+  # zonal: summarize a Raster obj using zones defined in a RasterLayer
+  # crosstab: to cross-tabluate two RasterLayer objs
+
+r <- raster(ncol = 36, nrow = 18)
+r[] <- runif(ncell(r))
+mean_all_cell <- cellStats(r, mean)
+
+
+s <- r
+s[] <- round(runif(ncell(s)) * 5)
+s
+r
+zonal(r, s, 'mean') # summarize the value of r by each zone defined by s
+
+freq(s)
+#      value count
+# [1,]     0    58
+# [2,]     1   138
+# [3,]     2   140
+# [4,]     3   120
+# [5,]     4   123
+# [6,]     5    69
+
+freq(s, value = 3)
+
+
+ctab <- crosstab(r * 3, s)
+ctab
+plot(r * 3)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
