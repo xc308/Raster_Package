@@ -147,6 +147,7 @@ b
 # extract a single layer from a RasterBrick or RasterStack
 r_2 <- raster(b, layer = 2)
 
+b
 
 # equivalent to create from disk with band = 2
 r_bd2 <- raster(filename, band = 2)

@@ -56,19 +56,18 @@ image.plot()
 
 plot(r)
 plot(p, add = TRUE)
-
 plot(b)
-image.plot(r)
 
 
 
+levels()
 
+quantile()
 
+ppoint
+order
 
-
-
-
-
+pretty
 
 
 
