@@ -102,32 +102,94 @@ apply(W, 1, sum, na.rm = TRUE)
 
 
 
+#==============================#
+# spatial influence for polygons
+#===============================#
+
+# Above are adjacnecy for a set of points
+# we look at it for polygons
+
+library(raster)
+p <- shapefile(system.file("external/lux.shp", package = "raster"))
+str(p)
+
+install.packages("sf")
+install.packages("spdep")
+library(sf)
+library(spdep)
 
 
+wr <- poly2nb(p, row.names = p$ID_2, queen = FALSE)
+wr # Neighbour list
+wr[1:2]
+
+wm <- nb2mat(wr, style = "B", zero.policy = TRUE)
+# the function creates an n by n weights matrix with 
+# values given by the coding scheme style chosen. 
+# B is the basic binary coding, 
+# W is row standardised, 
+# C is globally standardised, 
+# while S is the variance-stabilizing coding scheme 
+
+dim(wm)
+
+wr[1:5]
+wm[1:5, 1:11]
+
+# compute the number of neighbours for each area / polygon
+i <- rowSums(wm)
+i
+
+# in percentage of each times 
+round(100 * table(i) / length(i), 1)
+# 42 % of polygons have 3 neighours
 
 
+# plot the links btw polygons
+par(mai = c(0, 0, 0, 0))
+
+plot(p, col = "gray", border = "blue")
+
+xy <- coordinates(p) # retrieve
+head(xy, 3) # x,y coords
+dim(xy)
+plot(wr, xy, add = TRUE, col = 'red', lwd = 2)
 
 
+#---------------------------------------------------------#
+# some alternative ways to compute the "spatial influence"
+#---------------------------------------------------------#
+
+# Distance based
+wght_dist10 <- dnearneigh(xy, d1 = 0, d2 = 10)
+# euclidean distance
+str(wght_dist10)
+wght_dist10[1:2]
 
 
+wght_dist25 <- dnearneigh(xy, 0, 25, longlat = TRUE)
 
 
+# Nearst neighbours
+k3 <- knn2nb(knearneigh(xy, k = 3)) # retrun a neighbour list of class nb
+k6 <- knn2nb(knearneigh(xy, k = 6))
 
+k3[1:2]
 
+# now plot all of the neighbour situations
+plotit <- function(nb, lab = '') {
+  plot(p, col = "gray", border = "blue")
+  plot(nb, xy, col = "red", pch = 20, add = TRUE)
+  text(6.3, 50.1, paste("(", lab, ")"), cex = 1.25)
+}
 
+rep(0, 4)
+c(0, 0, 0, 0)
+par(mfrow = c(2, 3), mai = rep(0, 4))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+plotit(wr, "adjency")
+plotit(wght_dist10, "weighted distance 10km")
+plotit(wght_dist25, "weighted dist 25km")
+plotit(k3, "3 nearest neighb")
+plotit(k6, "6 nearest neighb")
 
